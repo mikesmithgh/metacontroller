@@ -14,39 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// TODO remove in favour of  controllerutil methods
+
 package object
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 // HasFinalizer returns true if obj has the named finalizer.
-func HasFinalizer(obj metav1.Object, name string) bool {
-	for _, item := range obj.GetFinalizers() {
-		if item == name {
-			return true
-		}
-	}
-	return false
+// Deprecated: use controllerutil.ContainsFinalizer instead
+func HasFinalizer(obj client.Object, name string) bool {
+	return controllerutil.ContainsFinalizer(obj, name)
 }
 
 // AddFinalizer adds the named finalizer to obj, if it isn't already present.
-func AddFinalizer(obj metav1.Object, name string) {
-	if HasFinalizer(obj, name) {
-		// It's already present, so there's nothing to do.
-		return
-	}
-	obj.SetFinalizers(append(obj.GetFinalizers(), name))
+// Deprecated: use controllerutil.AddFinalizer instead
+func AddFinalizer(obj client.Object, name string) {
+	controllerutil.AddFinalizer(obj, name)
 }
 
 // RemoveFinalizer removes the named finalizer from obj, if it's present.
-func RemoveFinalizer(obj metav1.Object, name string) {
-	finalizers := obj.GetFinalizers()
-	for i, item := range finalizers {
-		if item == name {
-			obj.SetFinalizers(append(finalizers[:i], finalizers[i+1:]...))
-			return
-		}
-	}
-	// We never found it, so it's already gone and there's nothing to do.
+// Deprecated: use controllerutil.RemoveFinalizer instead
+func RemoveFinalizer(obj client.Object, name string) {
+	controllerutil.RemoveFinalizer(obj, name)
 }

@@ -18,7 +18,6 @@ package server
 
 import (
 	"fmt"
-
 	"metacontroller/pkg/controller/common"
 
 	"metacontroller/pkg/controller/decorator"
@@ -30,6 +29,9 @@ import (
 
 	"metacontroller/pkg/apis/metacontroller/v1alpha1"
 	mcclientset "metacontroller/pkg/client/generated/clientset/internalclientset"
+
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+
 	"metacontroller/pkg/controller/composite"
 
 	controllerruntime "sigs.k8s.io/controller-runtime"
@@ -63,6 +65,7 @@ func New(configuration options.Configuration) (controllerruntime.Manager, error)
 	}
 
 	err = v1alpha1.AddToScheme(mgr.GetScheme())
+	err = apiextensionsv1.AddToScheme(mgr.GetScheme())
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +74,7 @@ func New(configuration options.Configuration) (controllerruntime.Manager, error)
 	// In this way we can take advantage of the underlying caching
 	// mechanism for reads instead of hitting the API directly.
 	controllerContext.K8sClient = mgr.GetClient()
+
 
 	compositeReconciler := composite.NewMetacontroller(*controllerContext, mcClient, configuration.Workers)
 	compositeCtrl, err := controller.New("composite-metacontroller", mgr, controller.Options{

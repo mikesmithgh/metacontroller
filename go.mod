@@ -20,6 +20,8 @@ require (
 	zgo.at/zcache v1.0.0
 )
 
+require k8s.io/apiextensions-apiserver v0.21.3
+
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -57,7 +59,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/apiextensions-apiserver v0.21.3 // indirect
 	k8s.io/component-base v0.21.3 // indirect
 	k8s.io/kube-openapi v0.0.0-20211109043538-20434351676c // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect

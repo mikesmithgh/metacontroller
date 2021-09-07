@@ -19,6 +19,7 @@ package finalizer
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	dynamicclientset "metacontroller/pkg/dynamic/clientset"
 	dynamicobject "metacontroller/pkg/dynamic/object"
@@ -60,7 +61,7 @@ func (m *Manager) SyncObject(client *dynamicclientset.ResourceClient, obj *unstr
 
 // ShouldFinalize returns true if the controller should take action to manage
 // children even though the parent is pending deletion (i.e. finalize).
-func (m *Manager) ShouldFinalize(parent metav1.Object) bool {
+func (m *Manager) ShouldFinalize(parent client.Object) bool {
 	// There's no point managing children if the parent has a GC finalizer,
 	// because we'd be fighting the GC.
 	if hasGCFinalizer(parent) {
