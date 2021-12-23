@@ -110,6 +110,7 @@ func (rm *Manager) Start(stopCh chan struct{}) {
 
 func (rm *Manager) Stop() {
 	for _, informer := range rm.relatedInformers {
+		// FYI there is an open PR to add support for RemoveEventHandlers: https://github.com/kubernetes/kubernetes/pull/98657
 		informer.Informer().RemoveEventHandlers()
 		informer.Close()
 	}
@@ -234,7 +235,11 @@ func (rm *Manager) findRelatedParents(relatedSlice ...*unstructured.Unstructured
 		}
 
 	MATCHPARENTS:
-		for _, parent := range parents {
+		for _, parentObj := range parents {
+			parent, err := common.ToUnstructured(parentObj)
+			if err != nil {
+				return nil
+			}
 			customizeHookResponse := rm.getCachedCustomizeHookResponse(parent)
 
 			if customizeHookResponse == nil {

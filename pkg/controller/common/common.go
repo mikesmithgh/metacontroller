@@ -334,11 +334,17 @@ func (m InformerMap) Get(gvr schema.GroupVersionResource) informers.GenericInfor
 }
 
 // GetObject return object via Lister from given informer, namespaced or not.
-func GetObject(inf informers.GenericInformer, namespace, name string) (runtime.Object, error) {
+func GetObject(inf informers.GenericInformer, namespace, name string) (*unstructured.Unstructured, error) {
+	var runtimeObj runtime.Object
+	var err error
 	if namespace == "" {
-		return inf.Lister().Get(name)
+		runtimeObj, err = inf.Lister().Get(name)
 	}
-	return inf.Lister().ByNamespace(namespace).Get(name)
+	runtimeObj, err = inf.Lister().ByNamespace(namespace).Get(name)
+	if err != nil {
+		return nil, err
+	}
+	return ToUnstructured(runtimeObj)
 }
 
 func HasStatusSubresource(crd *v1.CustomResourceDefinition, version string) bool {
